@@ -9,12 +9,18 @@ spring:
     username: mintuchel
     password: 1234
     driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    # 기존에 수동으로 만든 테이블이 있어도 Flyway가 관리하기 시작하게 함
+    baseline-on-migrate: true
   jpa:
     hibernate:
-      # 테이블이 없으면 자동으로 만들고 아니면 수정사항만 반영
-      ddl-auto: update
-    # JPA가 만드는 쿼리 직접 눈으로 확인하기
+      # 핵심: 'update' 대신 'validate'를 씁니다.
+      # 'validate'는 "Flyway가 만든 테이블이 내 엔티티랑 맞나?" 검사만 하고 직접 고치지는 않습니다.
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+        # PostgreSQL의 UUID 생성 등을 위해 Dialect를 명시해주면 더 정확합니다.
+        dialect: org.hibernate.dialect.PostgreSQLDialect
