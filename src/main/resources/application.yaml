@@ -1,6 +1,7 @@
 server:
   port: 8080
-
+jwt:
+    secret: v9y$B&E)H@McQfTjWnZr4u7x!A%C*F-JaNdRgUkXp2s5v8y/B?E(G+KbPeShVmYq
 spring:
   application:
     name: mini-sns
@@ -15,9 +16,11 @@ spring:
     baseline-on-migrate: true
   jpa:
     hibernate:
-      # 핵심: 'update' 대신 'validate'를 씁니다.
-      # 'validate'는 "Flyway가 만든 테이블이 내 엔티티랑 맞나?" 검사만 하고 직접 고치지는 않습니다.
-      ddl-auto: validate
+      # create: 기존 테이블 drop 후 create
+      # create-drop: 엔티티와 DB가 일치하는지만 확인
+      # update: 엔티티에 필드가 추가되면 DB에도 컬럼을 추가해줍니다. 하지만 기존 컬럼의 삭제나 변경은 반영하지 않는 경우가 많아 주의해야 함.
+      # validate: 엔티티와 DB가 일치하는지만 확인. 검사만 하고 직접 고치지 않음 ('Flyway' 쓸때 사용)
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:

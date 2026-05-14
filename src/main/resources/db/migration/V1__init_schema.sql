@@ -1,5 +1,6 @@
 CREATE TABLE "members" (
-    "id" VARCHAR(20) PRIMARY KEY,
+    "id" BIGSERIAL PRIMARY KEY,
+    "name" VARCHAR(20) NOT NULL UNIQUE,
     "password" CHAR(64) NOT NULL,
     "email" VARCHAR(255) NOT NULL UNIQUE,
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -8,8 +9,8 @@ CREATE TABLE "members" (
 );
 
 CREATE TABLE "posts" (
-    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    "member_id" VARCHAR(20) NOT NULL REFERENCES "members"("id") ON DELETE CASCADE,
+    "id" BIGSERIAL PRIMARY KEY,
+    "member_id" VARCHAR(20) NOT NULL REFERENCES "members"("id"),
     "description" TEXT,
     "image_url" TEXT,
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -18,8 +19,8 @@ CREATE TABLE "posts" (
 );
 
 CREATE TABLE "likes" (
-    "post_id" UUID NOT NULL REFERENCES "posts" ("id") ON DELETE CASCADE,
-    "member_id" VARCHAR(20) NOT NULL REFERENCES "members" ("id") ON DELETE CASCADE,
+    "post_id" UUID NOT NULL REFERENCES "posts" ("id"),
+    "member_id" VARCHAR(20) NOT NULL REFERENCES "members" ("id"),
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY ("post_id", "member_id")
@@ -27,8 +28,8 @@ CREATE TABLE "likes" (
 
 CREATE TABLE "comments" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    "post_id" UUID NOT NULL REFERENCES "posts" ("id") ON DELETE CASCADE,
-    "member_id" VARCHAR(20) NOT NULL REFERENCES "members" ("id") ON DELETE CASCADE,
+    "post_id" UUID NOT NULL REFERENCES "posts" ("id"),
+    "member_id" VARCHAR(20) NOT NULL REFERENCES "members" ("id"),
     "content" TEXT NOT NULL,
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
