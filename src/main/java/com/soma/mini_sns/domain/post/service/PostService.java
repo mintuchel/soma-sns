@@ -1,13 +1,12 @@
 package com.soma.mini_sns.domain.post.service;
 
-import com.soma.mini_sns.domain.member.entity.Member;
-import com.soma.mini_sns.domain.member.repository.MemberRepository;
+import com.soma.mini_sns.domain.member.dto.response.MemberInfoResponse;
+import com.soma.mini_sns.domain.member.mapper.MemberMapper;
 import com.soma.mini_sns.domain.post.dto.request.PostRequest;
-import com.soma.mini_sns.domain.post.dto.response.MyPostsResponse;
 import com.soma.mini_sns.domain.post.dto.response.PostInfoResponse;
 import com.soma.mini_sns.domain.post.dto.response.PostSummaryResponse;
 import com.soma.mini_sns.domain.post.entity.Post;
-import com.soma.mini_sns.domain.post.repository.PostRepository;
+import com.soma.mini_sns.domain.post.mapper.PostMapper;
 import com.soma.mini_sns.global.exception.errorCode.MemberErrorCode;
 import com.soma.mini_sns.global.exception.errorCode.PostErrorCode;
 import com.soma.mini_sns.global.exception.exception.MemberException;
@@ -27,45 +26,39 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
 
-    private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
+    private final PostMapper postMapper;
+    private final MemberMapper memberMapper;
 
     @Value("${jwt.secret}")
     private String secretKey;
 
-    // 최신 게시글 목록 조회
     @Transactional(readOnly = true)
     public List<PostSummaryResponse> getPosts() {
-        return postRepository.findAll().stream()
-                .map(PostSummaryResponse::from)
-                .toList();
+        return postMapper.findAll();
     }
 
-    // 특정 게시글 정보 조회
     @Transactional(readOnly = true)
     public PostInfoResponse getPost(Long postId) {
-        Post post = postRepository.findById(postId)
+        return postMapper.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
-
-        return PostInfoResponse.from(post);
     }
 
     @Transactional
     public void createPost(String token, PostRequest request) {
-        Member member = getMemberFromToken(token);
+        MemberInfoResponse member = getMemberFromToken(token);
 
         Post post = Post.builder()
-                .member(member)
-                .author(member.getName())
+                .memberId(member.id())
+                .author(member.name())
                 .title(request.title())
                 .description(request.description())
                 .imageUrl(request.imageUrl())
                 .build();
 
-        postRepository.save(post);
+        postMapper.insert(post);
     }
 
-    private Member getMemberFromToken(String token) {
+    private MemberInfoResponse getMemberFromToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
 
         Claims claims = Jwts.parser()
@@ -76,7 +69,7 @@ public class PostService {
 
         String email = claims.getSubject();
 
-        return memberRepository.findByEmail(email)
+        return memberMapper.findByEmail(email)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }

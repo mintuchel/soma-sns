@@ -7,19 +7,9 @@ import java.time.LocalDateTime;
 public record PostInfoResponse(
         Long postId,
         String author,
+        String author_email,
         String title,
         String description,
         String imageUrl,
         LocalDateTime createdAt
-) {
-    public static PostInfoResponse from(Post post) {
-        return new PostInfoResponse(
-                post.getId(),
-                post.getAuthor(),
-                post.getTitle(),
-                post.getDescription(),
-                post.getImageUrl(),
-                post.getCreatedAt()
-        );
-    }
-}
+) { }

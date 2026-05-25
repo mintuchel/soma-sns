@@ -1,7 +1,6 @@
 package com.soma.mini_sns.domain.post.controller;
 
 import com.soma.mini_sns.domain.post.dto.request.PostRequest;
-import com.soma.mini_sns.domain.post.dto.response.MyPostsResponse;
 import com.soma.mini_sns.domain.post.dto.response.PostInfoResponse;
 import com.soma.mini_sns.domain.post.dto.response.PostSummaryResponse;
 import com.soma.mini_sns.domain.post.service.PostService;

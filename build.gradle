@@ -20,18 +20,19 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // MyBatis
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     runtimeOnly 'org.postgresql:postgresql'
 
-    // migration을 위한 flyway 사용
+    // migration
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'
 
-    // BCrypt 대신 argon2 사용
+    // BCrypt
     implementation 'org.bouncycastle:bcprov-jdk18on:1.77'
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    //Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-security'

@@ -10,14 +10,4 @@ public record PostSummaryResponse(
         String title,
         String imageUrl,
         LocalDateTime createdAt
-) {
-    public static PostSummaryResponse from(Post post) {
-        return new PostSummaryResponse(
-                post.getId(),
-                post.getAuthor(),
-                post.getTitle(),
-                post.getImageUrl(),
-                post.getCreatedAt()
-        );
-    }
-}
+) { }

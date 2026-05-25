@@ -1,40 +1,22 @@
 package com.soma.mini_sns.domain.post.entity;
 
-import com.soma.mini_sns.domain.member.entity.Member;
 import com.soma.mini_sns.global.common.BaseEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
+/**
+ * MyBatis는 ORM 기술이 아니므로 DB 스키마와 연관관계를 코드 단에서 정의하지 못함!
+ * 데이터베이스 패러다임과 객체지향 패러다임의 불일치 문제는 감수하고 간다.
+ */
+
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "posts")
 public class Post extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
-
-    @Column(nullable = false, length = 20)
+    private Long memberId;
     private String author;
-
-    @Column(nullable = false, length = 100)
     private String title;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
-
-    @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
-
-    public void update(String title, String description, String imageUrl) {
-        this.title = title;
-        this.description = description;
-        this.imageUrl = imageUrl;
-    }
 }
