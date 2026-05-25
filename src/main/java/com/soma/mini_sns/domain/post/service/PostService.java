@@ -48,8 +48,8 @@ public class PostService {
         MemberInfoResponse member = getMemberFromToken(token);
 
         Post post = Post.builder()
-                .memberId(member.id())
-                .author(member.name())
+                .authorId(member.id())
+                .authorName(member.name())
                 .title(request.title())
                 .description(request.description())
                 .imageUrl(request.imageUrl())

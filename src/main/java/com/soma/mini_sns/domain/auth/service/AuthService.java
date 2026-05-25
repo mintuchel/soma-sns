@@ -30,7 +30,7 @@ public class AuthService {
 
     private final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60L;
 
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
         Member member = memberMapper.findByEmailWithPassword(request.email())
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));

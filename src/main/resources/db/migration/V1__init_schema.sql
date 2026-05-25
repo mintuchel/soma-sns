@@ -10,8 +10,8 @@ CREATE TABLE members (
 
 CREATE TABLE posts (
     id          BIGSERIAL    PRIMARY KEY,
-    member_id   BIGINT       NOT NULL REFERENCES members(id),
-    author      VARCHAR(20)  NOT NULL,
+    author_id   BIGINT       NOT NULL REFERENCES members(id),
+    author_name VARCHAR(20)  NOT NULL,
     title       VARCHAR(100) NOT NULL,
     description TEXT         NOT NULL,
     image_url   TEXT,

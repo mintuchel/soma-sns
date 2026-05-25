@@ -10,8 +10,8 @@ import java.util.Optional;
 public interface MemberMapper {
 
     @Insert("""
-            INSERT INTO members (name, password, email)
-            VALUES (#{name}, #{password}, #{email})
+            INSERT INTO members (name, password, email, created_at, updated_at)
+            VALUES (#{name}, #{password}, #{email}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Member member);

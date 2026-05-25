@@ -13,59 +13,50 @@ import java.util.Optional;
 public interface PostMapper {
 
     @Insert("""
-        INSERT INTO posts (
-            member_id, 
-            author, 
-            title, 
-            description, 
-            image_url
-        ) VALUES (
-            #{memberId}, 
-            #{author}, 
-            #{title}, 
-            #{description}, 
-            #{imageUrl}
-        )
-    """)
+                INSERT INTO posts (
+                    author_id,
+                    author_name,
+                    title,
+                    description,
+                    image_url
+                ) VALUES (
+                    #{authorId},
+                    #{authorName},
+                    #{title},
+                    #{description},
+                    #{imageUrl}
+                )
+            """)
+    // DB에서 생성한 PK값을 반환받아 Post 객체의 id 필드에 자동으로 매핑해줌
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Post post);
 
     @Select("""
-        SELECT
-            id AS post_id,
-            author,
-            title,
-            image_url,
-            created_at
-        FROM posts
-        WHERE deleted_at IS NULL
-        ORDER BY created_at DESC
-    """)
+                SELECT
+                    id AS post_id,
+                    author_name,
+                    title,
+                    image_url,
+                    created_at
+                FROM posts
+                WHERE deleted_at IS NULL
+                ORDER BY created_at DESC
+            """)
     List<PostSummaryResponse> findAll();
 
     @Select("""
-        SELECT
-            id AS post_id,
-            author,
-            title,
-            description,
-            image_url,
-            created_at
-        FROM posts
-        WHERE id = #{id} AND deleted_at IS NULL
-    """)
+                SELECT
+                    p.id AS post_id,
+                    p.author_id,
+                    m.name AS author_name,
+                    m.email AS author_email,
+                    p.title,
+                    p.description,
+                    p.image_url,
+                    p.created_at
+                FROM posts p
+                JOIN members m ON m.id = p.author_id
+                WHERE p.id = #{id} AND p.deleted_at IS NULL
+            """)
     Optional<PostInfoResponse> findById(@Param("id") Long id);
-
-    @Select("""
-        SELECT
-            id AS post_id,
-            author,
-            title,
-            image_url,
-            created_at
-        FROM posts
-        WHERE member_id = #{memberId} AND deleted_at IS NULL
-        ORDER BY created_at DESC
-    """)
-    List<PostSummaryResponse> findByMemberId(@Param("memberId") Long memberId);
 }

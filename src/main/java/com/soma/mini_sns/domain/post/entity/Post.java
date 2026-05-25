@@ -14,8 +14,8 @@ import lombok.*;
 @AllArgsConstructor
 public class Post extends BaseEntity {
     private Long id;
-    private Long memberId;
-    private String author;
+    private Long authorId;
+    private String authorName;
     private String title;
     private String description;
     private String imageUrl;
