@@ -1,6 +1,7 @@
 package com.soma.mini_sns.global.exception.handler;
 
 import com.soma.mini_sns.global.exception.exception.MemberException;
+import com.soma.mini_sns.global.exception.exception.PostException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,5 +21,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(e.getUserErrorCode().getHttpStatus())
                 .body(e.getUserErrorCode().getMessage());
+    }
+
+    @ExceptionHandler(value = PostException.class)
+    protected ResponseEntity<String> handlePostException(PostException e) {
+
+        return ResponseEntity
+                .status(e.getPostErrorCode().getHttpStatus())
+                .body(e.getPostErrorCode().getMessage());
     }
 }

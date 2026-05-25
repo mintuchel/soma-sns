@@ -60,14 +60,14 @@ public class MemberService {
     @Transactional
     public SignUpResponse signUp(SignUpRequest request){
 
-        // 닉네임 중복 검사
-        if (memberRepository.existsByName(request.name())) {
-            throw new MemberException(MemberErrorCode.DUPLICATE_NAME);
-        }
-
         // 이메일 중복 검사
         if (memberRepository.existsByEmail(request.email())) {
             throw new MemberException(MemberErrorCode.DUPLICATE_EMAIL);
+        }
+
+        // 닉네임 중복 검사
+        if (memberRepository.existsByName(request.name())) {
+            throw new MemberException(MemberErrorCode.DUPLICATE_NAME);
         }
 
         // 비밀번호 해싱하여 저장하기
