@@ -41,18 +41,6 @@ public class PostController {
                 .body(postService.getPost(postId));
     }
 
-    @GetMapping("/me")
-    @Operation(summary = "내 게시글 조회")
-    public ResponseEntity<MyPostsResponse> getMyPosts(
-            @RequestHeader("Authorization") String authorizationHeader) {
-        
-        String token = authorizationHeader.substring(7);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(postService.getMyPosts(token));
-    }
-
     @PostMapping("")
     @Operation(summary = "게시글 작성")
     public ResponseEntity<Void> createPost(
@@ -63,33 +51,6 @@ public class PostController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .build();
-    }
-
-    @PatchMapping("/{postId}")
-    @Operation(summary = "게시글 수정")
-    public ResponseEntity<Void> updatePost(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @PathVariable Long postId,
-            @Valid @RequestBody PostRequest request) {
-        String token = authorizationHeader.substring(7);
-        postService.updatePost(token, postId, request);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
-    }
-
-    @DeleteMapping("/{postId}")
-    @Operation(summary = "게시글 삭제")
-    public ResponseEntity<Void> deletePost(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @PathVariable Long postId) {
-        String token = authorizationHeader.substring(7);
-        postService.deletePost(token, postId);
-
-        return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
                 .build();
     }
 }

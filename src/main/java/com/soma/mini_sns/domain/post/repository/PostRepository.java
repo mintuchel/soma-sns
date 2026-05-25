@@ -3,6 +3,7 @@ package com.soma.mini_sns.domain.post.repository;
 import com.soma.mini_sns.domain.post.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,10 +13,8 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-
-    // 최신 게시글 목록 조회 (삭제되지 않고, 최신순, 작성자 닉네임 포함)
-    @Query(value= """
-                SELECT
+    String FIND_ALL_QUERY = """
+                 SELECT
                     id,
                     author,
                     title,
@@ -24,13 +23,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 FROM posts
                 WHERE deleted_at IS NULL
                 ORDER BY created_at DESC
-            """
-            , nativeQuery = true
-    )
-    List<Post> findAll();
+            """;
 
-    // 특정 게시글 조회 (삭제되지 않고, 작성자 정보 포함)
-    @Query(value= """
+    String FIND_BY_ID_QUERY = """
                 SELECT
                     id,
                     author,
@@ -44,10 +39,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 FROM posts
                 JOIN members ON post.member_id = members.id
                 WHERE deleted_at IS NULL
-            """
-    )
-    Optional<Post> findById(Long id);
+            """;
 
-    // 특정 회원이 작성한 게시글 조회
-    List<Post> findByMemberIdAndDeletedAtIsNull(Long memberId);
+    // 최신 게시글 목록 조회 (삭제되지 않고, 최신순, 작성자 닉네임 포함)
+    @Query(value= FIND_ALL_QUERY, nativeQuery = true)
+    List<Post> findAll();
+
+    // 특정 게시글 조회 (삭제되지 않고, 작성자 정보 포함)
+    @Query(value= FIND_BY_ID_QUERY, nativeQuery = true)
+    Optional<Post> findById(@Param("id") Long id);
 }

@@ -36,7 +36,7 @@ public class PostService {
     // 최신 게시글 목록 조회
     @Transactional(readOnly = true)
     public List<PostSummaryResponse> getPosts() {
-        return postRepository.findAllByDeletedAtIsNull().stream()
+        return postRepository.findAll().stream()
                 .map(PostSummaryResponse::from)
                 .toList();
     }
@@ -44,18 +44,10 @@ public class PostService {
     // 특정 게시글 정보 조회
     @Transactional(readOnly = true)
     public PostInfoResponse getPost(Long postId) {
-        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
 
         return PostInfoResponse.from(post);
-    }
-
-    @Transactional(readOnly = true)
-    public MyPostsResponse getMyPosts(String token) {
-        Member member = getMemberFromToken(token);
-        List<Post> posts = postRepository.findByMemberIdAndDeletedAtIsNull(member.getId());
-
-        return MyPostsResponse.from(posts);
     }
 
     @Transactional
@@ -71,36 +63,6 @@ public class PostService {
                 .build();
 
         postRepository.save(post);
-    }
-
-    @Transactional
-    public void updatePost(String token, Long postId, PostRequest request) {
-        Member member = getMemberFromToken(token);
-
-        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
-                .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
-
-        // 작성자 본인 확인
-        if (!post.getMember().getId().equals(member.getId())) {
-            throw new PostException(PostErrorCode.UNAUTHORIZED_POST_ACCESS);
-        }
-
-        post.update(request.title(), request.description(), request.imageUrl());
-    }
-
-    @Transactional
-    public void deletePost(String token, Long postId) {
-        Member member = getMemberFromToken(token);
-
-        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
-                .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
-
-        // 작성자 본인 확인
-        if (!post.getMember().getId().equals(member.getId())) {
-            throw new PostException(PostErrorCode.UNAUTHORIZED_POST_ACCESS);
-        }
-
-        postRepository.delete(post);
     }
 
     private Member getMemberFromToken(String token) {
