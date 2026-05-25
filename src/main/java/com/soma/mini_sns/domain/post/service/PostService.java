@@ -11,15 +11,11 @@ import com.soma.mini_sns.global.exception.errorCode.MemberErrorCode;
 import com.soma.mini_sns.global.exception.errorCode.PostErrorCode;
 import com.soma.mini_sns.global.exception.exception.MemberException;
 import com.soma.mini_sns.global.exception.exception.PostException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import com.soma.mini_sns.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.SecretKey;
 import java.util.List;
 
 @Service
@@ -28,9 +24,7 @@ public class PostService {
 
     private final PostMapper postMapper;
     private final MemberMapper memberMapper;
-
-    @Value("${jwt.secret}")
-    private String secretKey;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional(readOnly = true)
     public List<PostSummaryResponse> getPosts() {
@@ -59,16 +53,7 @@ public class PostService {
     }
 
     private MemberInfoResponse getMemberFromToken(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
-
-        Claims claims = Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-
-        String email = claims.getSubject();
-
+        String email = jwtTokenProvider.extractEmail(token);
         return memberMapper.findByEmail(email)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
     }

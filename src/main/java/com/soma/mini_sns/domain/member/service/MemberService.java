@@ -7,25 +7,18 @@ import com.soma.mini_sns.domain.member.entity.Member;
 import com.soma.mini_sns.domain.member.mapper.MemberMapper;
 import com.soma.mini_sns.global.exception.errorCode.MemberErrorCode;
 import com.soma.mini_sns.global.exception.exception.MemberException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import com.soma.mini_sns.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.crypto.SecretKey;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberMapper memberMapper;
-
-    @Value("${jwt.secret}")
-    private String secretKey;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional(readOnly = true)
     public MemberInfoResponse getUserById(long id) {
@@ -35,16 +28,7 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberInfoResponse getMyInfo(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
-
-        Claims claims = Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-
-        String email = claims.getSubject();
-
+        String email = jwtTokenProvider.extractEmail(token);
         return memberMapper.findByEmail(email)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
