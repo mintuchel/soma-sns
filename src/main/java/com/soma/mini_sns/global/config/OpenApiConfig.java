@@ -10,10 +10,12 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
+/**
+ * Swagger UI를 구성하고 보여주기 위한 전용 설정 Bean
+ */
 @Configuration
 public class OpenApiConfig {
 
-    /** Swagger UI Authorize / @SecurityRequirement 에서 동일한 이름으로 사용 */
     public static final String BEARER_JWT = "bearer-jwt";
 
     @Bean
@@ -28,7 +30,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info().title("mini-sns API").version("v1"))
                 .components(new Components().addSecuritySchemes(BEARER_JWT, bearer))
-                // 전역 적용: Swagger UI에 Authorize 버튼이 뜨고, 모든 요청에 토큰이 자동으로 첨부됨
+                // Swagger UI에 Authorize 버튼이 뜨고, 모든 요청에 토큰이 자동으로 첨부되게 함
                 .addSecurityItem(new SecurityRequirement().addList(BEARER_JWT));
     }
 }

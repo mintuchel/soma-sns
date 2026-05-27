@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.soma.mini_sns.domain.post.mapper.PostMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.soma.mini_sns.domain.post.entity.Post">
+        INSERT INTO posts (
+            author_id,
+            author_name,
+            title,
+            description,
+            image_url
+        ) VALUES (
+            #{authorId},
+            #{authorName},
+            #{title},
+            #{description},
+            #{imageUrl}
+        )
+    </insert>
+
+    <select id="findAll" resultType="com.soma.mini_sns.domain.post.dto.response.PostSummaryResponse">
+        SELECT
+            id          AS postId,
+            author_name AS authorName,
+            title,
+            image_url   AS imageUrl,
+            created_at  AS createdAt
+        FROM posts
+        WHERE deleted_at IS NULL
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" parameterType="long"
+            resultType="com.soma.mini_sns.domain.post.dto.response.PostInfoResponse">
+        SELECT
+            p.id        AS postId,
+            p.author_id AS authorId,
+            m.name      AS authorName,
+            m.email     AS authorEmail,
+            p.title,
+            p.description,
+            p.image_url AS imageUrl,
+            p.created_at AS createdAt
+        FROM posts p
+        JOIN members m ON m.id = p.author_id
+        WHERE p.id = #{id} AND p.deleted_at IS NULL
+    </select>
+
+</mapper>
